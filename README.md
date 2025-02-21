@@ -7,6 +7,7 @@
 + [Other Concepts](#other-concepts)
 + [How Airflow works](#how-airflow-works)
 + [Usage of Airflow](#usage-of-airflow)
++ [Define a DAG](#define_dag)
 + [Airflow Webserver Problem](#airflow-webserver-problem)
 + [Interact with Sqlite3](#interact-with-sqlite3)
 + [Deploy](#deploy)
@@ -323,6 +324,39 @@
     8) **Xcom**: It's used to push/pull data
     9) **Trigger**: conditional task execution
         + [documentation](https://tinyurl.com/bddfzajn)
+
+# define_dag
+
+  ```python
+  from datetime import datetime, timedelta
+
+  from airflow import DAG
+  from airflow.models import Variable
+
+  from utility.ms_teams_notification import send_fail_notification_teams_message,\
+        send_success_notification_teams_message
+
+  default_args = {
+    'owner' : 'admin',
+    'email_on_failure': True,
+    'email_on_retry': False,
+    'retries': int(Variable.get("no_of_retry")),
+    'retry_delay': timedelta(seconds=int(Variable.get("task_retry_delay_in_sec"))),
+    'on_failure_callback': send_fail_notification_teams_message,
+    'on_success_callback': send_success_notification_teams_message
+    }
+
+with DAG(dag_id='TrggerFileTransferAndIngestionDAG'
+        , dag_display_name='Trigger File Transfer And Ingestion DAG'
+         , default_args=default_args
+         , description=f'Trigger SFTPfileTransferDefaultSource, SFTPfileTransferSaviyntIDM and KCCIngestDataToBigQuery DAG'
+         , start_date=datetime(2025, 2, 21)
+         , schedule_interval='0 17 * * *'  # every day at 17
+         , tags=['bigquery', 'schedule', 'daily']
+         , catchup=False):
+         # define tasks
+         pass
+  ```
 
 # airflow-webserver-problem
 
