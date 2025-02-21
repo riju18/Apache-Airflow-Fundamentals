@@ -12,6 +12,7 @@
 + [Deploy](#deploy)
 + [DAG Optimization](#dag-optimization)
 + [Amazing Airflow Operators](#airflow_operators)
++ [Airflow Security](#airflow_roles)
 + [version](#version)
 
 # airflow
@@ -36,37 +37,53 @@
 
 + **Web server</span>**
   + Flask server with Gunicorn the UI.
+
 + **Scheduler**
+
 + **Metastore**
   + It's related to DB where all the metadata related to airflow itself but also related to our data pipeline, plans, tasks & so on will be stored.
+
 + **Executor</span>**
   + It defines how our tasks are going to be executed.
   + Type
     **SequentialExecutor**: It executes tasks one after another.
     **LocalExecutor**: It can execute task parallely.
+
 + **Worker**
   + It defines where the task will be executed.
 
 # **core-concept**</span>
 
 + **DAG**: Depends on one another but has No loop.
+
 + **Operator**: It's kind of wrapper around the task. Ex: we want to connect to our DB, insert data in it, we'll use an operator to do that.**One operator for one Task.**
   + **Action** : It executes fn or cmd.
+  
   + **Transfer** : It allows to transfer data from src to destination.
+  
   + **Sensor** : It waits for something to happen before moving to next task.
     + **poke_interval(sec)**</span> : Every n seconds the given task should wait.
+    
     + **timeout(sec)**</span> : Max time limit to wait.
+    
     + **softfail(bollean)**</span> : If set to **true**, will marked the task as skipped on failure.
+
 + **Backfilling & catchup</span>** : It basically fetches the data from previous missing dates. By default it is **True**. When catchup is set to **True** then the dag will run from last run date & when it is **false** then the dag will be triggered from current date.  
   
 # **other-concepts**</span>
 
 + **Task Instance</span>**
+
 + **Workflow</span>** : It's the combination of all concepts.
+
 + **Hook</span>** : It embodies a connection to a remote server, service or platform. It's used to transafer data between source to destination.
+
 + **Pool</span>** : priority of task/worker.
+
 + **plugin</span>** : Airflow provides advantages to create custom plugin like operator, hook, sensor etc.
+
 + **.airflowignore</span>** : Dag names we want to ignore. File must be put in dags dir.
+
 + **zommbies/undeeds</span>** : theory.
 
 # how-airflow-works
@@ -392,7 +409,7 @@
     5. Network service tier: ```Standard```(**for dev**)
 
         
-  + **how to access the DB from composer** (comppser1):
+  + **how to access the DB from `GCP composer`**:
     + GCP composer uses the **PostgreSQL** by default which is kept in **GKE**
     + steps:
       1. get the GKE cluster name from
@@ -501,6 +518,25 @@
                                               , sql='SELECT * FROM PUBLIC.ACTOR LIMIT 1;'
                                               , show_return_value_in_logs=True)
   ```
+
+# airflow_roles
+
+- **public**
+  > Public users (anonymous) don’t have any permissions.
+
+- **Viewer**
+  > Viewer users have limited read permissions.
+
+- **USer**
+  > User users have Viewer permissions plus additional permissions.
+
+- **Op**
+  > Op users have User permissions plus additional permissions. 
+
+- **Admin**
+  > Admin users have all possible permissions, including granting or revoking permissions from other users. Admin users have Op permission plus additional permissions.
+
+- [doc](https://airflow.apache.org/docs/apache-airflow-providers-fab/stable/auth-manager/access-control.html)
 
 # version
 
