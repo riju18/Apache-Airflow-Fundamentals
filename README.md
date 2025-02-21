@@ -208,7 +208,7 @@
 + **Tasks**:
   + **Sequential ordering** : task1 >> task2 >> task3 >> task4
   + **Parallel ordering** : task1 >> [task2, task3] >> task4
-  + **Trigger a TAG from another DAG**
+  + **Trigger a DAG from another DAG**
       ```python
       from airflow.models import DAG
       from airflow.operators.trigger_dagrun import TriggerDagRunOperator
