@@ -8,6 +8,7 @@
 + [How Airflow works](#how-airflow-works)
 + [Usage of Airflow](#usage-of-airflow)
 + [Define a DAG](#define_dag)
++ [Condition on Task](#branching)
 + [Airflow Webserver Problem](#airflow-webserver-problem)
 + [Interact with Sqlite3](#interact-with-sqlite3)
 + [Deploy](#deploy)
@@ -357,6 +358,10 @@ with DAG(dag_id='TrggerFileTransferAndIngestionDAG'
          # define tasks
          pass
   ```
+
+# branching
+
+- wip...
 
 # airflow-webserver-problem
 
