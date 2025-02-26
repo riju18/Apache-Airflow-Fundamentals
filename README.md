@@ -354,7 +354,10 @@ with DAG(dag_id='TrggerFileTransferAndIngestionDAG'
          , start_date=datetime(2025, 2, 21)
          , schedule_interval='0 17 * * *'  # every day at 17
          , tags=['bigquery', 'schedule', 'daily']
-         , catchup=False):
+         , catchup=False
+         , owner_links={"admin": "mailto:samrat.mitra@vivasoftltd.com"}
+         # or, owner_links={"admin": "https://www.example.com"}
+         ):
          # define tasks
          pass
   ```
