@@ -328,6 +328,8 @@
 
 # define_dag
 
+- [DAG all params](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/models/dag/index.html)
+
   ```python
   from datetime import datetime, timedelta
 
@@ -348,7 +350,7 @@
     'is_paused_upon_creation': True  # by default the DAG will be disabled
     }
 
-with DAG(dag_id='TrggerFileTransferAndIngestionDAG'
+  with DAG(dag_id='TrggerFileTransferAndIngestionDAG'
         , dag_display_name='Trigger File Transfer And Ingestion DAG'
          , default_args=default_args
          , description=f'Trigger SFTPfileTransferDefaultSource, SFTPfileTransferSaviyntIDM and KCCIngestDataToBigQuery DAG'
