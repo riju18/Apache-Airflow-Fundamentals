@@ -344,7 +344,8 @@
     'retries': int(Variable.get("no_of_retry")),
     'retry_delay': timedelta(seconds=int(Variable.get("task_retry_delay_in_sec"))),
     'on_failure_callback': send_fail_notification_teams_message,
-    'on_success_callback': send_success_notification_teams_message
+    'on_success_callback': send_success_notification_teams_message,
+    'is_paused_upon_creation': True  # by default the DAG will be disabled
     }
 
 with DAG(dag_id='TrggerFileTransferAndIngestionDAG'
@@ -357,6 +358,8 @@ with DAG(dag_id='TrggerFileTransferAndIngestionDAG'
          , catchup=False
          , owner_links={"admin": "mailto:username@gmail.com"}
          # or, owner_links={"admin": "https://www.example.com"}
+         , fail_stop=True  # the downstream tasks will skipped instead of getting failed
+         , dagrun_timeout=timedelta(seconds=10)
          ):
          # define tasks
          pass
