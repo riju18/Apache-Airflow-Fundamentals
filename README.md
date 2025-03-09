@@ -376,6 +376,28 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 --> define the DAG
   --> then use the code
 """
+
+def _connect_to_api()-> str:
+  """
+  try to establish API connection
+
+  --> returns task id according to status code
+  --> if status_code == 200:
+      returns next task id
+  --> else:
+      returns termination task id
+  """
+
+  falcon = CSPMRegistration(client_id=Variable.get('falcon_client_id'),
+                            client_secret=Variable.get('falcon_client_secret')
+                            )
+  status_code = falcon.get_policy_settings(cloud_platform=cloud_provide_list).get('status_code', None)
+  if status_code:
+      if int(status_code) == 200:
+          return 'get_api_data'  # next task
+      else:
+          return 'invalid_connection'  # termination task
+
 connect_to_api = BranchPythonOperator(task_id='connect_to_api',
                                           task_display_name='🌐 connect to API',
                                           python_callable=_connect_to_api,
