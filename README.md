@@ -369,7 +369,32 @@
 
 # branching
 
-- wip...
+```python
+from airflow.operators.python import PythonOperator, BranchPythonOperator
+
+"""
+--> define the DAG
+  --> then use the code
+"""
+connect_to_api = BranchPythonOperator(task_id='connect_to_api',
+                                          task_display_name='🌐 connect to API',
+                                          python_callable=_connect_to_api,
+                                          trigger_rule="all_success")
+
+# task #2: invalid connection
+invalid_connection = PythonOperator(task_id='invalid_connection',
+                                    task_display_name='🚫 Invalid connection',
+                                    python_callable=lambda: print('API connectiin is failed'),
+                                    trigger_rule="all_success") 
+
+# task #3: fetch API data
+get_api_data = PythonOperator(task_id='get_api_data',
+                            python_callable=_get_api_data)
+
+# taskflow
+connect_to_api >> invalid_connection
+connect_to_api >> get_api_data
+```
 
 # airflow-webserver-problem
 
