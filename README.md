@@ -613,7 +613,27 @@ connect_to_api >> get_api_data
                                               , show_return_value_in_logs=True)
   ```
 
-- Execute large SQL file: wip...
+- Execute large SQL file
+
+  ```python
+  from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+
+  QUERY_SQL_PATH = 'utility/sql/sp_dev_score_tmp.sql' 
+
+  create_or_replace_score_generation_sp = BigQueryInsertJobOperator(
+    task_id="create_or_replace_score_generation_sp", 
+    task_display_name="🛢 Create/replace dev score generations", 
+    gcp_conn_id='dev_gcp_service_account',
+    location=Variable.get('dataset_location'),
+    configuration={
+      "query": {
+        "query": "{% include '" + QUERY_SQL_PATH + "' %}",
+        "useLegacySql": False,
+        "priority": "BATCH",
+        }
+        }
+                                                             )
+  ```
 
 # airflow_roles
 
