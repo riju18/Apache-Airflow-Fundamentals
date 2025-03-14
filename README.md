@@ -593,6 +593,19 @@ connect_to_api >> get_api_data
 
 - Make proper calculation of `parallelism, max_active_tasks_per_dag and max_active_runs_per_dag`
 
+- XCOM
+  > XCOMs have size limitations. With Postgres, we can't share more than `1Gb` of data in a XCOM.
+  - **custom xcom backend**
+    - Instead of the `Airflow DB` to store your data, you can use an `S3 bucket`.
+    - No more limitations 🙌 
+    - **configurations**
+      - Install the common io and amazon providers
+      - Create a connection to your S3 bucket
+      - Define the XCOM_BACKEND setting to
+"airflow.providers.common.io.xcom.backend.XComObjectStorageBackend"
+      - **XCOM_OBJECTSTORAGE_THRESHOLD**=1048576, Anything above `1MB` will be stored in S3, otherwise in the DB
+
+
 - `N.B:` Airflow is an Orchestrator. Don't ever process large amount of data via `airflow`. Use corresponding tool/software/library/framework (e.g., `spark`)
 
 # airflow_operators
