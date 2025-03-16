@@ -9,6 +9,7 @@
 + [Usage of Airflow](#usage-of-airflow)
 + [Define a DAG](#define_dag)
 + [Condition on Task](#branching)
++ [Pool](#pool)
 + [Airflow Webserver Problem](#airflow-webserver-problem)
 + [Interact with Sqlite3](#interact-with-sqlite3)
 + [Deploy](#deploy)
@@ -418,6 +419,45 @@ connect_to_api >> invalid_connection
 connect_to_api >> get_api_data
 ```
 
+# pool
+> `Pools` determine which tasks can run `concurrently` within the defined limits.
+
+> `Priority Weights` decide the `order of execution` when multiple tasks are waiting in a queue
+
+```python
+# task 1:
+sleep1 = BashOperator(task_id='sleep1'
+                      , task_display_name='😴 sleep 1'
+                      , bash_command='sleep 1'
+                      , pool='my_pool'
+                      , priority_weight=1)
+        
+# task 2:
+sleep2 = BashOperator(task_id='sleep2'
+                      , task_display_name='😴 sleep 2'
+                      , bash_command='sleep 2'
+                      , pool='my_pool'
+                      , priority_weight=2
+                      , weight_rule='downstream')
+```
+> Here, task1 will run before task2 if both are waiting for execution in my_pool.
+
+**Example Scenario**
+  > You have a pool (api_calls) with 3 slots. You have 5 tasks assigned to this pool, each with different priority weights:
+
+| Task ID	 | Pool Name | Priority Weight
+| -------- | -------   | ---------------
+| Task A   | api_calls | 10
+| Task B   | api_calls | 5
+| Task C   | api_calls | 20
+| Task D   | api_calls | 15
+| Task E   | api_calls | 5
+
+> Since the pool has only `3 slots`, only `3 tasks` can run at a time.
+> `Tasks C (20), D (15), and A (10)` will run first, because they have the `highest` priority.
+> `Tasks B (5) and E (5)` will remain in the queue until a `slot is free`.
+
+
 # airflow-webserver-problem
 
 + **Problem**: server is running in PID: 4006 or whatever
@@ -610,6 +650,12 @@ connect_to_api >> get_api_data
         - for local: `Users/riju/airflow/xcoms` --> absolute path
       
       - **xcom_objectstorage_threshold**: -1 if > threshold value, 0 for any value
+
+- pool
+  - Use pools for resource-constrained tasks (e.g., API calls, database queries).
+  - Assign meaningful priority weights to ensure critical tasks run first.
+  - Do not rely on pools alone; also set dag_concurrency and max_active_runs.
+  - Avoid setting all tasks with the same priority weight, or they will be scheduled randomly.
 
 
 - `N.B:` Airflow is an Orchestrator. Don't ever process large amount of data via `airflow`. Use corresponding tool/software/library/framework (e.g., `spark`)
